@@ -1,5 +1,7 @@
 package fr.theo;
 
+import fr.theo.control.AddViewController;
+
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -8,14 +10,36 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
+import fr.theo.data.MovieDataBaseConnection;
+
 
 public class App extends Application {
+
     private static Stage stage;
+    private static Stage addStage;
+    private static MovieDataBaseConnection dbConnection;
 
     @Override
-    public void start(@SuppressWarnings("exports") Stage s) throws IOException {
+    public void start(Stage s) throws IOException {
+        dbConnection = new MovieDataBaseConnection();
         stage=s;
-        setRoot("primary","");
+        addStage = new Stage();
+        setRoot("view","");
+    }
+
+    public static Stage getStage() {return stage;}
+    public static Stage getAddStage() {return addStage;}
+    public static MovieDataBaseConnection getConnection() {return dbConnection;} 
+
+    public static void openAddViewStage() {
+        try {
+            Scene scene = new Scene(loadFXML("add-view"));
+            addStage.setTitle("Add movie window");
+            addStage.setScene(scene);
+            addStage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     static void setRoot(String fxml) throws IOException {

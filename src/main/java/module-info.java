@@ -1,8 +1,9 @@
 module fr.theo {
     requires java.sql;
-    requires javafx.controls;
+    requires transitive javafx.controls;
     requires javafx.fxml;
     requires javafx.media;
-    opens fr.theo to javafx.fxml;
+    opens fr.theo.data to javafx.base;
+    opens fr.theo.control to javafx.fxml;
     exports fr.theo;
 }
