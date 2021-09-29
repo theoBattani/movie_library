@@ -1,19 +1,31 @@
-package fr.theo.data;
+package fr.theo;
+
+import fr.theo.data.Movie;
+import fr.theo.util.MySQLConnectionWrapper;
 
 public class MovieDataBaseConnection {
-    SQLConnectionWrapper sqlConnection;
-    int nbColumnInTable;
+
+    private static final String TABLE = "movie_table";
+
+    private MySQLConnectionWrapper sqlConnection;
+    // private int nbColumnInTable;
 
     public MovieDataBaseConnection() {
-        sqlConnection = new SQLConnectionWrapper("localhost", "3306", "moviedb", "root", "");
-        nbColumnInTable = sqlConnection.countColumns("movie_table");
+        sqlConnection = new MySQLConnectionWrapper("localhost", "3306", "moviedb", "root", "");
+        // nbColumnInTable = sqlConnection.countColumns("movie_table");
     }
 
+    public void close() {sqlConnection.close();}
+
     public void addMovie(Movie movie) {
-        sqlConnection.insert("movie_table", 
+        sqlConnection.insert(TABLE, 
             new String[] {"id", "title", "year", "director_name"}, 
             new String[] {"NULL", movie.getTitle(), String.format("%d",movie.getYear()), movie.getDirectorName()}
         );
+    }
+
+    public void deleteMovie(Movie movie) {
+        sqlConnection.deleteById(TABLE, movie.getId());
     }
 
     public Movie[] getMovies() {
@@ -21,7 +33,7 @@ public class MovieDataBaseConnection {
         Movie[] output = new Movie[strMovies.length];
         int index = 0;
         for (String movieStr: strMovies) {
-            String id = "null";
+            int id = 0;
             String title = "";
             int year = 0;
             String directorName = "";
@@ -30,7 +42,7 @@ public class MovieDataBaseConnection {
                 String[] field = strAttr.split(":");
                 switch (field[0]) {
                     case "id":
-                        id = field[1];
+                        id = Integer.parseInt(field[1]);
                         break;
                     case "title": 
                         title = field[1];
@@ -44,8 +56,6 @@ public class MovieDataBaseConnection {
                 }
             }
             Movie movie = new Movie(id, title, year, directorName);
-            // System.out.println(index);
-            // System.out.println(movie.toString());
             output[index] = movie;
             index++;
         }

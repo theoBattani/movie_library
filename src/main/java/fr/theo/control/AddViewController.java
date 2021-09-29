@@ -10,8 +10,11 @@ import java.util.ResourceBundle;
 import fr.theo.App;
 import fr.theo.data.Movie;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.Scene;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 
 public class AddViewController {
@@ -22,6 +25,12 @@ public class AddViewController {
     @FXML // URL location of the FXML file that was given to the FXMLLoader
     private URL location;
 
+    @FXML // fx:id="stage"
+    private Stage stage; // Value injected by FXMLLoader
+
+    @FXML // fx:id="scene"
+    private Scene scene; // Value injected by FXMLLoader
+
     @FXML // fx:id="titleField"
     private TextField titleField; // Value injected by FXMLLoader
 
@@ -31,27 +40,39 @@ public class AddViewController {
     @FXML // fx:id="directorNameField"
     private TextField directorNameField; // Value injected by FXMLLoader
 
-
-    @FXML
-    void addMovieAction(ActionEvent event) {
+    private void addMovie() {
         App.getConnection().addMovie(
             new Movie(
-                "null",
+                -1,
                 titleField.getText(), 
                 Integer.parseInt(yearField.getText()), 
                 directorNameField.getText()
             )
         );
-        App.getAddStage().close();
+        stage.close();
     }
 
-    @FXML
-    void cancelAction(ActionEvent event) {
-        App.getAddStage().close();
-    }
+    private void cancel() {stage.close();}
+
+    @FXML void addMovieAction(ActionEvent event) {addMovie();}
+    @FXML void cancelAction(ActionEvent event) {cancel();}
 
     @FXML // This method is called by the FXMLLoader when initialization is complete
     void initialize() {
-
+        scene.setOnKeyPressed(new EventHandler<KeyEvent>(){
+            @Override
+            public void handle(KeyEvent event) {
+                switch (event.getCode()) {
+                    case ENTER:
+                        addMovie();
+                        break;
+                    case ESCAPE:
+                        cancel();
+                        break;
+                    default:
+                        break;
+                }
+            }
+        });
     }
 }

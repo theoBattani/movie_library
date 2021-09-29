@@ -1,4 +1,5 @@
-package fr.theo.data;
+
+package fr.theo.util;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -6,12 +7,12 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 
-public class SQLConnectionWrapper {
+public class MySQLConnectionWrapper {
 
-  Connection connection;
-  String url;
+  private Connection connection;
+  private String url;
 
-  public SQLConnectionWrapper(String host, String port, String dataBase, String username, String password) {
+  public MySQLConnectionWrapper(String host, String port, String dataBase, String username, String password) {
     this.url = String.format("jdbc:mysql://%s:%s/%s", host, port, dataBase);
     try {
       this.connection = DriverManager.getConnection(this.url, username, password);
@@ -19,6 +20,12 @@ public class SQLConnectionWrapper {
       e.printStackTrace();
     }
   }
+
+  public void close() {try {
+    this.connection.close();
+  } catch (SQLException e) {
+    e.printStackTrace();
+  }}
 
   public int countRows(String table) {
     ResultSet resultSet = null;
@@ -69,10 +76,8 @@ public class SQLConnectionWrapper {
 
   public void insert(String table, String[] fields_names, String[] fields_values) {
 
-    // on ne fait rien si l'on a pas le même nombre de valeur que de noms de champ
     if (fields_names.length != fields_values.length) return;
 
-    // creation de la requete
     String query = String.format("INSERT INTO `%s` (", table);
     for (int index = 0; index < fields_names.length - 1; index++) {
       query += String.format("`%s`,", fields_names[index]);
@@ -86,7 +91,6 @@ public class SQLConnectionWrapper {
     query += String.format("'%s') ", fields_values[fields_names.length - 1]);
     System.out.println(query);
 
-    // execution de la requete
     try {
       this.connection.createStatement().execute(query);
     } catch (SQLException e) {
@@ -96,7 +100,6 @@ public class SQLConnectionWrapper {
 
   public String[] select(String table, String[] fields_names) {
 
-    // creation de la requete
     String query = "SELECT ";
     for (int index = 0; index < fields_names.length - 1; index++) {
       query += String.format("%s,", fields_names[index]);
@@ -104,7 +107,6 @@ public class SQLConnectionWrapper {
     query += String.format("%s ", fields_names[fields_names.length - 1]);
     query += String.format("FROM %s", table);
 
-    // récupération du résultat de la requete
     ResultSet resultSet;
     String[] result = new String[fields_names.length];
     int index = 0;
@@ -143,6 +145,13 @@ public class SQLConnectionWrapper {
     return output;
   }
 
-  public void deleteById() {}
+  public void deleteById(String table, int id) {
+    String query = String.format("DELETE FROM %s WHERE id=%d", table, id);
+    try {
+      this.connection.createStatement().execute(query);
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+  }
   
 }

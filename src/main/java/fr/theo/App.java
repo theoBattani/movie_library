@@ -1,66 +1,47 @@
+
 package fr.theo;
 
-import fr.theo.control.AddViewController;
-
-import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.stage.Stage;
-
+// imports from JRE system libraries
 import java.io.IOException;
 
-import fr.theo.data.MovieDataBaseConnection;
-
+// imports from external libraries
+import javafx.fxml.FXMLLoader;
+import javafx.application.Application;
+import javafx.stage.Stage;
 
 public class App extends Application {
 
-    private static Stage stage;
-    private static Stage addStage;
-    private static MovieDataBaseConnection dbConnection;
+  private static MovieDataBaseConnection dbConnection;
 
-    @Override
-    public void start(Stage s) throws IOException {
-        dbConnection = new MovieDataBaseConnection();
-        stage=s;
-        addStage = new Stage();
-        setRoot("view","");
-    }
+  private static void newStage(String fxml, String title) throws IOException {
+    Stage stage = (new FXMLLoader(App.class.getResource("/fxml/"+fxml+".fxml"))).load();
+    stage.setTitle(title);
+    stage.show();
+  }
 
-    public static Stage getStage() {return stage;}
-    public static Stage getAddStage() {return addStage;}
-    public static MovieDataBaseConnection getConnection() {return dbConnection;} 
+  public static MovieDataBaseConnection getConnection() {return dbConnection;} 
 
-    public static void openAddViewStage() {
-        try {
-            Scene scene = new Scene(loadFXML("add-view"));
-            addStage.setTitle("Add movie window");
-            addStage.setScene(scene);
-            addStage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+  public static void openMovieView() {
+    try {newStage("movie-view", "Movie View");} 
+    catch (IOException e) {e.printStackTrace();}
+  }
 
-    static void setRoot(String fxml) throws IOException {
-        setRoot(fxml,stage.getTitle());
-    }
+  @Override 
+  public void start(Stage s) throws IOException {
+    newStage("main-view", "Movie Libray");
+  }
 
-    static void setRoot(String fxml, String title) throws IOException {
-        Scene scene = new Scene(loadFXML(fxml));
-        stage.setTitle(title);
-        stage.setScene(scene);
-        stage.show();
-    }
-
-    private static Parent loadFXML(String fxml) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("/fxml/"+fxml + ".fxml"));
-        return fxmlLoader.load();
-    }
-
-
-    public static void main(String[] args) {
-        launch(args);
-    }
-
+  public static void main(String[] args) {
+    dbConnection = new MovieDataBaseConnection();
+    launch(args);
+  }
 }
+
+
+
+
+
+
+
+
+
