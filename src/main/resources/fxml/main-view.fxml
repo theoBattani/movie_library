@@ -18,7 +18,7 @@
                <children>
                   <TableView fx:id="tableView" layoutX="173.0" layoutY="14.0" onMouseClicked="#mouseClickedOnTable" prefHeight="453.0" prefWidth="453.0">
                     <columns>
-                      <TableColumn fx:id="titleColumn" prefWidth="202.0" text="Tilte" />
+                      <TableColumn fx:id="titleColumn" prefWidth="202.0" text="Title" />
                       <TableColumn fx:id="yearColumn" minWidth="0.0" prefWidth="56.0" text="Year" />
                         <TableColumn fx:id="directorColumn" prefWidth="208.0" text="Director" />
                     </columns>
