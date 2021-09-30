@@ -8,6 +8,16 @@ public class QueryBuilder {
   
   public String build() {return this.builder.toString();}
 
+  public QueryBuilder notNull() {
+    this.builder.append("NOT NULL ");
+    return this;
+  }
+
+  public QueryBuilder primaryKey(String key) {
+    this.builder.append(String.format("PRIMARY KEY (%s)", key));
+    return this;
+  } 
+
   public QueryBuilder insert() {
     this.builder.append("INSERT ");
     return this;
@@ -15,6 +25,38 @@ public class QueryBuilder {
 
   public QueryBuilder delete() {
     this.builder.append("DELETE ");
+    return this;
+  }
+
+  public QueryBuilder create() {
+    this.builder.append("CREATE ");
+    return this;
+  }
+
+  public QueryBuilder database(String database) {
+    this.builder.append(String.format("DATABASE %s", database));
+    return this;
+  }
+
+  public QueryBuilder table(String table) {
+    this.builder.append(String.format("TABLE %s ", table));
+    return this;
+  }
+
+  public QueryBuilder createTable(
+    String table, 
+    String[] field_declarations
+  ) {
+    this.create();
+    this.table(table);
+    this.builder.append("(");
+    for (int index = 0; index < field_declarations.length - 1; index++)
+      this.builder.append(String.format("%s, ", 
+        field_declarations[index])
+      );
+    this.builder.append(String.format("%s);", 
+      field_declarations[field_declarations.length - 1])
+    );
     return this;
   }
 

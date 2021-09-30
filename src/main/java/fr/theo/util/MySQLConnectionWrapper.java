@@ -3,9 +3,9 @@ package fr.theo.util;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
 
 public class MySQLConnectionWrapper {
 
@@ -16,10 +16,7 @@ public class MySQLConnectionWrapper {
     String host, String port, String dataBase, 
     String username, String password
   ) {
-    this.url = String.format(
-      "jdbc:mysql://%s:%s/%s", 
-      host, port, dataBase
-    );
+    this.url = String.format("jdbc:mysql://%s:%s/%s", host, port, dataBase);
     try {
       this.connection = DriverManager.getConnection(this.url, username, password);
     } catch (SQLException e) {
@@ -146,8 +143,7 @@ public class MySQLConnectionWrapper {
     try {
       this.connection.createStatement().execute(
         (new QueryBuilder())
-          .update(table)
-          .set(names, values)
+          .update(table).set(names, values)
           .where(String.format("id=%d", id))
           .build()
       );
@@ -160,8 +156,7 @@ public class MySQLConnectionWrapper {
     try {
       this.connection.createStatement().execute(
         (new QueryBuilder())
-          .delete()
-          .from(table)
+          .delete().from(table)
           .where(String.format("id=%d", id))
           .build()
       );

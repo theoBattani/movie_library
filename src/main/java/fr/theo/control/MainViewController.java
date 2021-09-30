@@ -10,9 +10,9 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TableColumn;
 import javafx.event.ActionEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.beans.Observable;
 import javafx.beans.binding.DoubleExpression;
 import javafx.collections.ObservableList;
-import javafx.beans.Observable;
 import javafx.scene.control.cell.PropertyValueFactory;
 
 public class MainViewController {
@@ -44,8 +44,15 @@ public class MainViewController {
     );
 
     // define properties in table columns
-    titleColumn.setCellValueFactory(new PropertyValueFactory<Movie, String>("title"));
-    yearColumn.setCellValueFactory(new PropertyValueFactory<Movie, Integer>("year")); directorColumn.setCellValueFactory(new PropertyValueFactory<Movie, String>("directorName"));
+    titleColumn.setCellValueFactory(
+      new PropertyValueFactory<Movie, String>("title")
+    );
+    yearColumn.setCellValueFactory(
+      new PropertyValueFactory<Movie, Integer>("year")
+    ); 
+    directorColumn.setCellValueFactory(
+      new PropertyValueFactory<Movie, String>("directorName")
+    );
     
     // attach list of observables to the table
     tableView.setItems(pullMovies());
@@ -87,7 +94,6 @@ public class MainViewController {
     Controller.requestPullMovieList();
     return Controller.getMovies();
   }
-
 }
 
 

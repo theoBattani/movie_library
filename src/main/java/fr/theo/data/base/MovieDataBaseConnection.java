@@ -29,7 +29,7 @@ public class MovieDataBaseConnection {
       new String[] {
         "NULL", 
         movie.getTitle(), 
-        String.format("%d",movie.getYear()), 
+        String.format("%d", movie.getYear()), 
         movie.getDirectorName()
       }
     );
