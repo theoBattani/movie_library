@@ -1,4 +1,4 @@
-package fr.theo.data;
+package fr.theo.data.table;
 
 public class Movie {
 

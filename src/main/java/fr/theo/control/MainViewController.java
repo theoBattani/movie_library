@@ -1,94 +1,99 @@
 
 package fr.theo.control;
 
-import java.util.ResourceBundle;
-import java.net.URL;
+import fr.theo.data.table.Movie;
 
-import javafx.beans.Observable;
-import javafx.beans.binding.DoubleExpression;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.TableView;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TableColumn;
-
-import fr.theo.App;
-import fr.theo.data.Movie;
+import javafx.event.ActionEvent;
+import javafx.scene.input.MouseEvent;
+import javafx.beans.binding.DoubleExpression;
+import javafx.collections.ObservableList;
+import javafx.beans.Observable;
+import javafx.scene.control.cell.PropertyValueFactory;
 
 public class MainViewController {
+
+  // Values injected by FXMLLoader
+  @FXML Stage stage;
+  @FXML Scene scene;
+  @FXML private TableView<Movie> tableView; 
+  @FXML private TableColumn<Movie, String> titleColumn;
+  @FXML private TableColumn<Movie, Integer> yearColumn; 
+  @FXML private TableColumn<Movie, String> directorColumn;
+
+  @FXML void onStageClose() {close();}
+  @FXML void onNewAction(ActionEvent event) {newAction();}
+  @FXML void onModifyAction(ActionEvent event) {modifyAction();}
+  @FXML void onDeleteAction(ActionEvent event) {deleteAction();}
+  @FXML void mouseClickedOnTable(MouseEvent event) {select();}
+
+  //  This method is called by the FXMLLoader 
+  // when initialization is complete
+  @FXML void initialize() {
+
+    // attach resize callbacks to the stage
+    stage.widthProperty().addListener(
+      widthProperty -> onWidth(widthProperty)
+    );
+    stage.heightProperty().addListener(
+      heightProperty -> onHeight(heightProperty)
+    );
+
+    // define properties in table columns
+    titleColumn.setCellValueFactory(new PropertyValueFactory<Movie, String>("title"));
+    yearColumn.setCellValueFactory(new PropertyValueFactory<Movie, Integer>("year")); directorColumn.setCellValueFactory(new PropertyValueFactory<Movie, String>("directorName"));
     
-    ObservableList<Movie> movieList = FXCollections.observableArrayList();
+    // attach list of observables to the table
+    tableView.setItems(pullMovies());
+  }
 
-    // ResourceBundle that was given to the FXMLLoader
-    @FXML private ResourceBundle resources;
-
-    // URL location of the FXML file that was given to the FXMLLoader
-    @FXML private URL location;
-
-    // Values injected by FXMLLoader
-    @FXML Stage stage;
-    @FXML Scene scene;
-    @FXML private TableView<Movie> tableView; 
-    @FXML private TableColumn<Movie, String> titleColumn;
-    @FXML private TableColumn<Movie, Integer> yearColumn; 
-    @FXML private TableColumn<Movie, String> directorColumn;
-
-    @FXML void onStageClose(ActionEvent event) {App.getConnection().close();}
-
-    @FXML void onAddAction(ActionEvent event) {App.openMovieView();}
-
-    @FXML void onDeleteAction(ActionEvent event) {
-        Movie movie = tableView.getSelectionModel().getSelectedItem();
-        deleteMovie(movie);
-        update();
-    }
-
-    @FXML void onUpdateAction(ActionEvent event) {
-        update();
-    }
-
-    // This method is called by the FXMLLoader when initialization is complete
-    @FXML void initialize() {
-
-        stage.widthProperty().addListener(widthProperty -> onWidth(widthProperty));
-        stage.heightProperty().addListener(heightProperty -> onHeight(heightProperty));
-
-        titleColumn.setCellValueFactory(new PropertyValueFactory<Movie, String>("title"));
-        yearColumn.setCellValueFactory(new PropertyValueFactory<Movie, Integer>("year"));
-        directorColumn.setCellValueFactory(new PropertyValueFactory<Movie, String>("directorName"));
-        
-        tableView.setItems(movieList);
-        update();
-    }
-
-    // resize callbacks
-    private void onWidth(Observable widthProperty) {
-        double width = ((DoubleExpression) widthProperty).getValue();
-        tableView.setPrefWidth(width - 196);
-    }
-    private void onHeight(Observable heightProperty) {
-        double height = ((DoubleExpression) heightProperty).getValue();
-        tableView.setPrefHeight(height - 64);
-    }
+  // resize callbacks
+  private void onWidth(Observable widthProperty) {
+    double width = ((DoubleExpression) widthProperty).getValue();
+    tableView.setPrefWidth(width - 196);
+  }
+  private void onHeight(Observable heightProperty) {
+    double height = ((DoubleExpression) heightProperty).getValue();
+    tableView.setPrefHeight(height - 64);
+  }
 
 
+  // Buttons actions
+  private void modifyAction() {Controller.requestOpenMovieView();}
+  private void deleteAction() {Controller.requestDeleteSelectedMovie();}
+  private void newAction() {
+    Controller.setSelection(null);
+    Controller.requestOpenMovieView();
+  }
 
-    private void updateMovieList() {
-        movieList.removeAll(movieList);
-        for (Movie movie: App.getConnection().getMovies())
-            movieList.add(movie);
-    }
+  private void close() {
+    // close the database connection
+    Controller.getConnection().close();
+  }
 
-    private void update() {
-        updateMovieList();
-    }
+  private void select() {
+    // give the selected movie in the table view to the controller
+    Controller.setSelection(
+      tableView.getSelectionModel().getSelectedItem()
+    );
+  } 
 
-    private void deleteMovie(Movie movie) {
-        App.getConnection().deleteMovie(movie);
-    }
+  private ObservableList<Movie> pullMovies() {
+    // grab the movies in the controller 
+    Controller.requestPullMovieList();
+    return Controller.getMovies();
+  }
+
 }
+
+
+
+
+
+
+
 

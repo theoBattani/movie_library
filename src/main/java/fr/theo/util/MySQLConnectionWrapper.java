@@ -12,8 +12,14 @@ public class MySQLConnectionWrapper {
   private Connection connection;
   private String url;
 
-  public MySQLConnectionWrapper(String host, String port, String dataBase, String username, String password) {
-    this.url = String.format("jdbc:mysql://%s:%s/%s", host, port, dataBase);
+  public MySQLConnectionWrapper(
+    String host, String port, String dataBase, 
+    String username, String password
+  ) {
+    this.url = String.format(
+      "jdbc:mysql://%s:%s/%s", 
+      host, port, dataBase
+    );
     try {
       this.connection = DriverManager.getConnection(this.url, username, password);
     } catch (SQLException e) {
@@ -21,17 +27,19 @@ public class MySQLConnectionWrapper {
     }
   }
 
-  public void close() {try {
-    this.connection.close();
-  } catch (SQLException e) {
-    e.printStackTrace();
-  }}
+  public void close() {
+    try {
+      this.connection.close();
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+  }
 
   public int countRows(String table) {
     ResultSet resultSet = null;
     try {
       resultSet = this.connection.createStatement().executeQuery(
-        String.format("SELECT COUNT(*) FROM %s", table)
+        (new QueryBuilder()).select().count("*").from(table).build()
       );
       resultSet.next();
       return resultSet.getInt(1);
@@ -46,7 +54,7 @@ public class MySQLConnectionWrapper {
     int output = 0;
     try {
       resultSet = this.connection.createStatement().executeQuery(
-        String.format("SELECT * FROM %s", table)
+        (new QueryBuilder()).select("*").from(table).build()
       );
       ResultSetMetaData resultSetMetaData = resultSet.getMetaData();
       output =  resultSetMetaData.getColumnCount();
@@ -62,7 +70,7 @@ public class MySQLConnectionWrapper {
     String[] output = new String[nbColumns];
     try {
       resultSet = this.connection.createStatement().executeQuery(
-        String.format("SELECT * FROM %s", table)
+        (new QueryBuilder()).select("*").from(table).build()
       );
       ResultSetMetaData resultSetMetaData = resultSet.getMetaData();
       for (int index = 0; index < nbColumns; index++) {
@@ -74,25 +82,16 @@ public class MySQLConnectionWrapper {
     return output;
   }
 
-  public void insert(String table, String[] fields_names, String[] fields_values) {
-
-    if (fields_names.length != fields_values.length) return;
-
-    String query = String.format("INSERT INTO `%s` (", table);
-    for (int index = 0; index < fields_names.length - 1; index++) {
-      query += String.format("`%s`,", fields_names[index]);
-    }
-    query += String.format("`%s`) ", fields_names[fields_names.length - 1]);
-    query += "VALUES (";
-    for (int index = 0; index < fields_values.length - 1; index++) {
-      if (fields_values[index] == "NULL") query += String.format("%s,", fields_values[index]);
-      else query += String.format("'%s',", fields_values[index]);
-    }
-    query += String.format("'%s') ", fields_values[fields_names.length - 1]);
-    System.out.println(query);
-
+  public void insert(String table, 
+    String[] fields_names, String[] fields_values) {
     try {
-      this.connection.createStatement().execute(query);
+      this.connection.createStatement().execute(
+        (new QueryBuilder())
+          .insert()
+          .into(table, fields_names)
+          .values(fields_values)
+          .build()
+      );
     } catch (SQLException e) {
       e.printStackTrace();
     }
@@ -100,18 +99,16 @@ public class MySQLConnectionWrapper {
 
   public String[] select(String table, String[] fields_names) {
 
-    String query = "SELECT ";
-    for (int index = 0; index < fields_names.length - 1; index++) {
-      query += String.format("%s,", fields_names[index]);
-    }
-    query += String.format("%s ", fields_names[fields_names.length - 1]);
-    query += String.format("FROM %s", table);
-
     ResultSet resultSet;
     String[] result = new String[fields_names.length];
-    int index = 0;
     try {
-      resultSet = this.connection.createStatement().executeQuery(query);
+      resultSet = this.connection.createStatement().executeQuery(
+        (new QueryBuilder())
+          .select(fields_names)
+          .from(table)
+          .build()
+      );
+      int index = 0;
       while (resultSet.next()) {
         result[index] = "";
         result[index] += String.format("%s:%s,", fields_names[index], resultSet.getString(fields_names[index]));
@@ -123,13 +120,13 @@ public class MySQLConnectionWrapper {
   }
 
   public String[] SelectAll(String table) {
-    String query = String.format("SELECT * FROM %s", table);
     String[] output = new String[countRows(table)];
     String[] names = getColumnNames(table);
-    ResultSet resultSet = null;
-    int index = 0;
     try {
-      resultSet = this.connection.createStatement().executeQuery(query);
+      ResultSet resultSet = this.connection.createStatement().executeQuery(
+        (new QueryBuilder()).select("*").from(table).build()
+      );
+      int index = 0;
       int nbColumns = countColumns(table);
       while (resultSet.next()) {
         output[index] = "";
@@ -145,13 +142,41 @@ public class MySQLConnectionWrapper {
     return output;
   }
 
-  public void deleteById(String table, int id) {
-    String query = String.format("DELETE FROM %s WHERE id=%d", table, id);
+  public void updateById(String table, int id, String[] names, String[] values) {
     try {
-      this.connection.createStatement().execute(query);
+      this.connection.createStatement().execute(
+        (new QueryBuilder())
+          .update(table)
+          .set(names, values)
+          .where(String.format("id=%d", id))
+          .build()
+      );
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+  }
+
+  public void deleteById(String table, int id) {
+    try {
+      this.connection.createStatement().execute(
+        (new QueryBuilder())
+          .delete()
+          .from(table)
+          .where(String.format("id=%d", id))
+          .build()
+      );
     } catch (SQLException e) {
       e.printStackTrace();
     }
   }
   
 }
+
+
+
+
+
+
+
+
+
