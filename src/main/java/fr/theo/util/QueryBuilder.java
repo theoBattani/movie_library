@@ -5,6 +5,8 @@ public class QueryBuilder {
   private StringBuilder builder;
 
   public QueryBuilder() {this.builder = new StringBuilder();}
+  
+  public String build() {return this.builder.toString();}
 
   public QueryBuilder insert() {
     this.builder.append("INSERT ");
@@ -84,9 +86,5 @@ public class QueryBuilder {
     return this;
   }
 
-  public String build() {
-    System.out.println(this.builder.toString());
-    return this.builder.toString();
-  }
 
 }

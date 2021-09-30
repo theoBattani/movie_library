@@ -3,7 +3,7 @@ package fr.theo;
 
 // imports from project packages
 import fr.theo.control.Controller;
-import fr.theo.util.MovieDataBaseConnection;
+import fr.theo.data.base.MovieDataBaseConnection;
 
 // imports from JRE system libraries
 import java.io.IOException;

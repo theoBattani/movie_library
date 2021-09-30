@@ -1,8 +1,8 @@
 package fr.theo.control;
 
 import fr.theo.App;
+import fr.theo.data.base.MovieDataBaseConnection;
 import fr.theo.data.table.Movie;
-import fr.theo.util.MovieDataBaseConnection;
 
 import javafx.collections.ObservableList;
 import javafx.collections.FXCollections;

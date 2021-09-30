@@ -1,7 +1,8 @@
 
-package fr.theo.util;
+package fr.theo.data.base;
 
 import fr.theo.data.table.Movie;
+import fr.theo.util.MySQLConnectionWrapper;
 
 public class MovieDataBaseConnection {
 
