@@ -93,8 +93,6 @@ public class QueryBuilder {
     );
     return this;
   }
-
-
   
   public QueryBuilder update(String table) {
     this.builder.append(String.format("UPDATE %s ", table));
@@ -129,14 +127,19 @@ public class QueryBuilder {
     return this;
   }
 
-
-
-
-
   public QueryBuilder count(String name) {
     this.builder.append(String.format("COUNT(%s) ", name));
     return this;
   }
 
-
 }
+
+
+
+
+
+
+
+
+
+
