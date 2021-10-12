@@ -8,6 +8,40 @@ public class QueryBuilder {
   
   public String build() {return this.builder.toString();}
 
+  public QueryBuilder select() {
+    this.builder.append("SELECT ");
+    return this;
+  }
+  public QueryBuilder select(String name) {
+    this.select();
+    this.builder.append(String.format("%s ", name));
+    return this;
+  }
+  public QueryBuilder select(String[] names) {
+
+    this.select();
+    for (int index = 0; index < names.length - 1; index++) {
+      this.builder.append(String.format("%s, ", names[index]));
+    }
+    this.builder.append(String.format("%s ", names[names.length - 1]));
+    return this;
+  }
+    
+  public QueryBuilder from(String table) {
+    this.builder.append(String.format("FROM %s", table)); 
+    return this;
+  }
+
+  public QueryBuilder where(String condition) {
+    this.builder.append("WHERE " + condition + " ");
+    return this;
+  }
+
+  public QueryBuilder groupBy(String expression) {
+    this.builder.append("GROUP BY " + expression + " ");
+    return this;
+  }
+
   public QueryBuilder notNull() {
     this.builder.append("NOT NULL ");
     return this;
@@ -60,25 +94,7 @@ public class QueryBuilder {
     return this;
   }
 
-  public QueryBuilder select() {
-    this.builder.append("SELECT ");
-    return this;
-  }
 
-  public QueryBuilder select(String name) {
-    this.select();
-    this.builder.append(String.format("%s ", name));
-    return this;
-  }
-
-  public QueryBuilder select(String[] names) {
-    this.select();
-    for (int index = 0; index < names.length - 1; index++) {
-      this.builder.append(String.format("%s, ", names[index]));
-    }
-    this.builder.append(String.format("%s ", names[names.length - 1]));
-    return this;
-  }
   
   public QueryBuilder update(String table) {
     this.builder.append(String.format("UPDATE %s ", table));
@@ -113,15 +129,9 @@ public class QueryBuilder {
     return this;
   }
 
-  public QueryBuilder from(String table) {
-    this.builder.append(String.format("FROM %s", table)); 
-    return this;
-  }
 
-  public QueryBuilder where(String condition) {
-    this.builder.append("WHERE " + condition);
-    return this;
-  }
+
+
 
   public QueryBuilder count(String name) {
     this.builder.append(String.format("COUNT(%s) ", name));
