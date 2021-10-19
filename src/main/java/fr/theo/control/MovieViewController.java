@@ -14,10 +14,10 @@ import javafx.scene.input.KeyEvent;
 public class MovieViewController {
 
   // Values injected by FXMLLoader
-  @FXML private Stage stage; // fx:id="stage"
-  @FXML private Scene scene; // fx:id="scene"
-  @FXML private TextField titleField; // fx:id="titleField"
-  @FXML private TextField yearField; // fx:id="yearField"
+  @FXML private Stage     stage;             // fx:id="stage"
+  @FXML private Scene     scene;             // fx:id="scene"
+  @FXML private TextField titleField;        // fx:id="titleField"
+  @FXML private TextField yearField;         // fx:id="yearField"
   @FXML private TextField directorNameField; // fx:id="directorNameField"
 
   @FXML void continueAction(ActionEvent event) {validate();}

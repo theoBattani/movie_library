@@ -1,4 +1,4 @@
-package fr.theo.util;
+package fr.theo.util.sql.query;
 
 public class QueryBuilder {
 
@@ -12,11 +12,13 @@ public class QueryBuilder {
     this.builder.append("SELECT ");
     return this;
   }
+
   public QueryBuilder select(String name) {
     this.select();
     this.builder.append(String.format("%s ", name));
     return this;
   }
+
   public QueryBuilder select(String[] names) {
 
     this.select();
@@ -44,6 +46,11 @@ public class QueryBuilder {
 
   public QueryBuilder notNull() {
     this.builder.append("NOT NULL ");
+    return this;
+  }
+
+  public QueryBuilder autoIncrement() {
+    this.builder.append("AUTO INCREMENT ");
     return this;
   }
 

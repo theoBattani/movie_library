@@ -1,9 +1,12 @@
 
-package fr.theo.util;
+package fr.theo.util.sql.connection;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+
+import fr.theo.util.sql.query.QueryBuilder;
+
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 
