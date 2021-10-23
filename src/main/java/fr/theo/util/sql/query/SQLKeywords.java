@@ -1,7 +1,7 @@
 
 package fr.theo.util.sql.query;
 
-public class Keywords {
+public class SQLKeywords {
 
   public static final String ADD                    = "ADD";
   public static final String ADD_CONSTRAINT         = "ADD CONSTRAINT";
